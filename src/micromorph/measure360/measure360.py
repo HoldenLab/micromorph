@@ -10,8 +10,26 @@ from micromorph.bacteria.utilities import apply_mask_to_image
 from micromorph.bacteria.phase_contrast_fitting import fit_phase_contrast_profile, fit_top_hat_profile
 from micromorph.bacteria.fluorescence_fitting import fit_ring_profile
 
+from tqdm import tqdm
 
-def run_measure360(img: np.array, mask: np.array, options: dict = dict()):
+def process_single_bacterium(args):
+    img, mask, i, bact, options = args
+    img_processed = apply_mask_to_image(img, mask == bact.label)
+    xc = bact.centroid[1]
+    yc = bact.centroid[0]
+
+    updated_options = {'magnitude': bact.major_axis_length * 1.5,
+                       'area': bact.area,
+                       'label': bact.label,
+                       'bbox': bact.bbox}
+
+    options.update(updated_options)
+
+    current_bact = Bacteria360(img_processed, (yc, xc), options=options)
+
+    return current_bact
+
+def run_measure360(img: np.array, mask: np.array, options: dict = dict(), pool=None, close_pool=True):
     """
     Runs the measure360 function on a single image or a stack of images.
 
@@ -29,38 +47,26 @@ def run_measure360(img: np.array, mask: np.array, options: dict = dict()):
     all_bacteria : list
         List of Bacteria360 objects.
     """
-
-    batch_pool = options.get('pool', None)
-    terminate_pool = False # leave as false if a pool was passed down
-
-    if batch_pool is None:
-        # Create a pool of worker processes
-        batch_pool = multiprocessing.Pool()
-        options.update({'pool': batch_pool})
-        terminate_pool = True
+    if pool is None:
+        logging.info("Making a pool for multiprocessing - this only happens once!")
+        pool = multiprocessing.Pool()
+        logging.info("Pool created!")
+    else:
+        logging.info("Using existing pool for multiprocessing")
+        pass
 
     all_bacteria = []
     if len(img.shape) == 2:
         # Get bacteria properties
         props = regionprops(mask)
 
-        for i, bact in enumerate(props):
-            if options.get('verbose', False):
-                print('Bacterium ', i+1, 'of', len(props))
-            img_processed = apply_mask_to_image(img, mask == bact.label)
-            xc = bact.centroid[1]
-            yc = bact.centroid[0]
+        args = [(img, mask, i, bact, options) for i, bact in enumerate(props)]
+        # all_bacteria = pool.map(process_single_bacterium, args)
 
-            updated_options = {'magnitude': bact.major_axis_length * 1.5,
-                               'area': bact.area,
-                               'label': bact.label,
-                               'bbox': bact.bbox}
-
-            options.update(updated_options)
-
-            current_bact = Bacteria360(img_processed, (yc, xc), options=options)
-
-            all_bacteria.append(current_bact)
+        with tqdm(total=len(args)) as pbar:
+            for result in pool.map(process_single_bacterium, args):
+                all_bacteria.append(result)
+                pbar.update(1)
     else:
         n_frames = img.shape[0]
         for i in range(n_frames):
@@ -68,16 +74,16 @@ def run_measure360(img: np.array, mask: np.array, options: dict = dict()):
             img_current = np.copy(img[i])
             mask_current = np.copy(mask[i])
 
-            current_data = run_measure360(img_current, mask_current, options=options)
+            current_data = run_measure360(img_current, mask_current, options=options, pool=pool, close_pool=False)
 
             for bact in current_data:
                 bact.slice = i
 
             all_bacteria.extend(current_data)
 
-    if terminate_pool:
-        batch_pool.close()
-        batch_pool.join()
+    if close_pool:
+        pool.close()
+        pool.join()
 
     return all_bacteria
 
@@ -277,8 +283,8 @@ def measure360(img, centroid, options=dict()):
     start = time.time()
 
     # possible way to run multiprocessing?
-    # with Pool() as pool:
-    #     data = pool.map(fit_multiprocessing, [(img, angle_range[i], x_1[i], y_1[i], x_2[i], y_2[i], params) for i in range(len(x_1))])
+#     with multiprocessing.Pool() as pool:
+#        data = pool.map(fit_multiprocessing, [(img, angle_range[i], x_1[i], y_1[i], x_2[i], y_2[i], params) for i in range(len(x_1))])
     # data = pool.starmap(fit_multiprocessing, [(img, angle_range[i], x_1[i], y_1[i], x_2[i], y_2[i], params) for i in range(len(x_1))])
         
     for i in range(len(x_1)):
