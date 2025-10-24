@@ -1,0 +1,45 @@
+{ "analysis_options":
+  {
+    "pxsize": 65,
+    "psfFWHM": 370,
+    "n_lines": 5,
+    "n_widths": 5,
+    "boundary_smoothing_factor": 15,
+    "fit_type": "phase",
+    "error_threshold": 0.05,
+    "max_iter": 50,
+    "min_distance_to_boundary": 1,
+    "step_size": 1,
+    "spline_val": 3,
+    "spline_spacing": 0.25
+  },
+  "segmentation_options":
+  {
+    "model": "bact_fluor_omni",
+    "use_gpu": false,
+    "binary_filter_options":
+    {
+      "min_area": null,
+      "max_area": null,
+      "min_length": null,
+      "max_length": null,
+      "min_width": null,
+      "max_width": null
+    }
+  },
+  "filter_options":
+  {
+    "apply_filter": true,
+    "filter_type": "derivative",
+    "threshold": 250
+  },
+  "export_options":
+  {
+    "export_type": "both"
+  },
+  "image_loading_options": {
+    "image_reader": "PIL",
+    "split_axis": null,
+    "split_channel": 1
+  }
+}

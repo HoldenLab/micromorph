@@ -1,0 +1,3 @@
+from micromorph._batch_gui._BatchToolsWidget import open_micromorph_batch_gui
+
+open_micromorph_batch_gui()

@@ -1,0 +1,107 @@
+site_name: micromorph
+site_description: A python package for measuring bacterial morphology from microscopy images
+
+repo_name: HoldenLab/micromorph
+repo_url: https://github.com/HoldenLab/micromorph
+
+plugins:
+  - mkdocstrings:
+        handlers:
+          python:
+            options:
+              ## Headings options:
+              # heading_level: 2 # default is 2
+              show_root_heading: true # default is false
+              show_label: false
+              # show_root_toc_entry: false # default is true
+              # show_root_full_path: false # default is true
+              # show_root_members_full_path: true # default is false
+              # show_object_full_path: true # default is false
+              # show_category_heading: true # default is false
+
+              ## Members options:
+              # members: [] # default is None
+              # members_order: 'source' # default is 'alphabetical'
+              filters: ["^[^_]"] # list of filters to filter objects by name
+              # group_by_category: false # default is true
+              # show_submodules: true # default is false
+
+              ## Docstrings options:
+              docstring_style: "numpy"
+              # docstring_options: {}  # griffe.docstrings options
+              docstring_section_style: 'table'  # default is 'table' (or spacy), list also works
+              line_length: 40 # default is 60
+              # merge_init_into_class: true  # default is false
+              show_if_no_docstring: true # default is false
+
+              ## Signatures/annotations options:
+              # show_signature: false  # default is true
+              show_signature_annotations: true # default is false
+              annotations_path: "source" # default is 'brief'
+              # separate_signature: true # default is false
+
+              show_bases: false # default is true
+              show_source: false # default is true
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.extra
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tilde
+  - codehilite
+
+nav:
+  - Home: index.md
+  - Usage:
+      - Napari plugin: usage/napari_plugin_example.md
+      - API: usage/api_example.md
+      - Command line interface: usage/batch_tools_example.md
+  - API:
+      - Bacteria Class: API/bacteria.md
+      - Utilities: API/meaasure360.md
+      - Fitting Methods: API/fitting_methods.md
+      - Shape Analysis: API/shape_analysis.md
+      - Segmentation: API/segmentation_utilities.md
+  # - API:
+  #     # - Bacteria Class: API/bacteria.md
+  #     # - Fitting Methods: API/fitting_methods.md
+  #     # - Shape Analysis: API/shape_analysis.md
+  #     # - measure
+  #     # - Utilities: API/utilities.md
+
+watch:
+  - src/micromorph
+  # - examples
+
+theme:
+  name: "material"
+
+  icon:
+    repo: fontawesome/brands/github
+
+  palette:
+#    # Palette toggle for automatic mode
+#    - media: "(prefers-color-scheme)"
+#      primary: blue grey
+#      toggle:
+#        icon: material/brightness-auto
+#        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      primary: blue grey
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      primary: blue grey
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference

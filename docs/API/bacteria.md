@@ -1,0 +1,1 @@
+::: micromorph.bacteria.Bacteria
