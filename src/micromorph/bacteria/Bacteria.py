@@ -176,7 +176,7 @@ def get_bacteria_for_index(img: np.array, mask: np.array, i: int, options: dict)
 
 
 
-def process_bacterium(args):
+def _process_bacterium(args):
     """Convenience function used for multi-processing."""
     try:
         img, mask, i, options = args
@@ -207,12 +207,9 @@ def get_bacteria_list(img: np.array, mask_original: np.array, options: dict, poo
         unique_values = unique_values[unique_values > 0]
         # args = [(img, mask, j, options) for j in range(1, n_cells + 1)]
         args = [(img, mask, j, options) for j in unique_values]
-        
-        # Run in single process for debugging
-        # all_bacteria = process_map(process_bacterium, args)
 
         with tqdm(total=len(args)) as pbar:
-            for result in pool.map(process_bacterium, args):
+            for result in pool.map(_process_bacterium, args):
                 all_bacteria.append(result)
                 pbar.update(1)
 

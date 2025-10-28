@@ -20,10 +20,11 @@ Generally, analysis will consist of the following steps:
 We will now go through each of these steps in more detail.
 
 ## Opening napari and the plugin
-Open napari whichever way you prefer. For example, from the terminal by typing: `napari`. Once napari is open, you 
-can select the plugin from the `Plugins` menu, and select `Bacteria Morphology Toolkit`.
+Open napari whichever way you prefer. For example, from the terminal after activating your python environment, by running the command: `napari`. Once napari is open, you 
+can select the plugin from the `Plugins` menu, and select `napari-micromorph`.
 
-(Insert image of napari with plugin loaded - TBD when final layout is decided)
+You can also directly open a napari instance with the plugin already loaded by running the command: `napari-micromorph`.
+
 
 ## Loading an image
 You can load an image by clicking on the `File` menu, and selecting `Open File(s)`. This will open a file dialog 
@@ -31,13 +32,17 @@ where you can select the image you want to analyse. You can also drag and drop a
 
 Alternatively, you can drop an image into the napari window, and it will be loaded automatically.
 
+You can also load one of the example images that come with the package by clicking on `File > Open sample...` and selecting one of micromorph example images.
+
 (Insert image of napari with image loaded)
 
 ## Segmenting the image
 We will now segment the image using one of the pre-trained omnipose models. Clicking on the `Segmentation Settings` 
 button will open up the following menu:
 
+<figure markdown="1">
 ![segmentation settings](../resources/segmentation_settings.png)
+</figure>
 
 Here you can select the model you want to use, and adjust the parameters. Once you are happy with the settings, just 
 close the window and they will be saved.
@@ -54,7 +59,9 @@ by mistake - an example would be to remove bright spots which the segmentation a
 We will now analyse the image using the `Run full analysis` button. Before we do however, let us check the analysis 
 settings by clicking on the `Analysis Settings` button:
 
+<figure markdown="1">
 ![analysis settings](../resources/full_analysis_settings.png)
+</figure>
 
 The key parameters which you need to set up here are the pixel size of your image, the full-width half-maximum of 
 your microscope's psf (point spread function), and the fit type (i.e. whether you are analysing a phase contrast or 

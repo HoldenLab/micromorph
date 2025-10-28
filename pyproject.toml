@@ -39,4 +39,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project.scripts]
-bactmeasure-batchtool = "micromorph:run_micromorph_batch_gui"
+micromorph-batch = "micromorph:open_micromorph_batch_gui"
+
+[tool.setuptools.package-data]
+'src' = ['*.json']

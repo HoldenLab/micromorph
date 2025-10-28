@@ -1,11 +1,19 @@
-# Using the Batch Tools
+# Batch processing the data
 !!! warning
     This page is still work in progress, so some parts may be incomplete or missing. We are working on it!
 
-![batchtools](../resources/batch_tools_panel.png)
+A batch processing panel is available if `micromorph` was installed on your environment with ```pip install micromorph[gui]```.
 
-Add folders to be analysed by copying their path into the text box and clicking `Add Folder`.
-The batch utility will specifically look for `.tif` files in the selected folders and subfolders.
+After that, the panel can opened by running the command
+
+`micromorph-batch`
+
+<figure markdown="1">
+![batchtools](../resources/batch_tools_panel.png)
+</figure>
+
+You can add folders to be analysed by copying their path into the text box and clicking `Add Folder`.
+The batch utility will specifically look for `.tif` files in the selected folders and subfolders. We are looking at ways to make this suitable for a broader format of files.
 If `Run Segmentation` is checked, the segmentation will be run on the selected folders and save masks in the same 
 folder as the images, with the same name as the image but with `_mask` appended.
 

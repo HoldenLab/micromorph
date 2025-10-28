@@ -58,10 +58,10 @@ nav:
   - Usage:
       - Napari plugin: usage/napari_plugin_example.md
       - API: usage/api_example.md
-      - Command line interface: usage/batch_tools_example.md
+      - Batch processing: usage/batch_tools_example.md
   - API:
       - Bacteria Class: API/bacteria.md
-      - Utilities: API/meaasure360.md
+      - Measure360: API/measure360.md
       - Fitting Methods: API/fitting_methods.md
       - Shape Analysis: API/shape_analysis.md
       - Segmentation: API/segmentation_utilities.md
@@ -92,7 +92,7 @@ theme:
 
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
-      primary: blue grey
+      primary: indigo
       scheme: default
       toggle:
         icon: material/brightness-7
@@ -100,7 +100,7 @@ theme:
 
     # Palette toggle for dark mode
     - media: "(prefers-color-scheme: dark)"
-      primary: blue grey
+      primary: indigo
       scheme: slate
       toggle:
         icon: material/brightness-4

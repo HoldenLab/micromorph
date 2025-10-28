@@ -12,27 +12,35 @@ that image.
 
 ```python
 from skimage.io import imread
-from napari_bacteria_morphology_toolkit._plugin._Bacteria.Bacteria import Bacteria
+from micromorph import get_bacteria_list
+from micromorph.measure360 import run_measure360
+
 import matplotlib.pyplot as plt
 
-# Load image and the corresponding mask
-image_stack = imread(r"test-data\multiple-cells\example_stack-2.tif")
-mask_stack = imread(r"test-data\multiple-cells\example_stack-2_mask_filtered.tif")
+if __name__ == "__main__":
+    # Load image and the corresponding mask
+    image_stack = imread("path/to/image")
+    mask_stack = imread("path/to/mask")
 
-# Select the first image and mask
-image = image_stack[0]
-mask = mask_stack[0] == 1
+    
+    # Get measure360 values for the cells in the stack
+    bacteria_list = run_measure360(image_stack, mask_stack, options={'n_angles': 50, 'pxsize': 65, 'fit_type': 'phase', 'psfFWHM': 250})
 
-plotting = False # Set to True to plot the image and mask
+    # or use get_bacteria_list to use "normal mode"
+    # bacteria_list = get_bacteria_list(image_stack, mask_stack, options={'pxsize': 65, 'n_widths': 5, 'fit_type': 'fluorescence', 'psfFWHM': 250})
 
-if plotting:
-    plt.imshow(image)
-    plt.imshow(mask)
+    # Get widths and lengths
+    widths = [bacteria.width for bacteria in bacteria_list]
+    lengths = [bacteria.length for bacteria in bacteria_list]
+
+    # Plot histograms
+    fig, ax = plt.subplots(1, 2, figsize=(12, 5))
+    ax[0].hist(widths, bins=30, color='blue', alpha=0.7)
+    ax[0].set_title('Width Distribution')
+
+    ax[1].hist(lengths, bins=30, color='green', alpha=0.7)
+    ax[1].set_title('Length Distribution')
     plt.show()
-else:
-    pass
-
-bacteria = Bacteria(image, mask, options={'pxsize': 65, 'n_widths': 5, 'fit_type': 'fluorescence', 'psfFWHM': 250})
-
-print(f"Centroid: {bacteria.centroid}, width: {bacteria.width}, length: {bacteria.length}")
 ```
+
+You can find various example scripts in the [micromorph GitHub repository](https://github.com/HoldenLab/micromorph/tree/master/examples).
