@@ -1,37 +1,29 @@
 from skimage.io import imread
 from micromorph import get_bacteria_list
+from micromorph.measure360 import run_measure360
+
 import matplotlib.pyplot as plt
 
-# enable logging
-import logging
-logging.basicConfig(level=logging.INFO)
-
 if __name__ == "__main__":
-
     # Load image and the corresponding mask
     image_stack = imread(r"C:\Users\u1870329\Documents\GitHub\micromorph\micromorph\test-data\multiple-cells\example_stack.tif")
     mask_stack = imread(r"C:\Users\u1870329\Documents\GitHub\micromorph\micromorph\test-data\multiple-cells\example_stack_mask.tif")
+    
+    # Get measure360 values for the cells in the stack
+    # bacteria_list = run_measure360(image_stack, mask_stack, options={'n_angles': 50, 'pxsize': 65, 'fit_type': 'phase', 'psfFWHM': 250})
 
-    # Print shapes
-    print(f"Image stack shape: {image_stack.shape}")
-    print(f"Mask stack shape: {mask_stack.shape}")
-
+    # or use get_bacteria_list to use "normal mode"
     bacteria_list = get_bacteria_list(image_stack, mask_stack, options={'pxsize': 65, 'n_widths': 5, 'fit_type': 'fluorescence', 'psfFWHM': 250})
 
-    # # Select the first image and mask
-    # image = image_stack[0]
-    # mask = mask_stack[0] == 1
+    # Get widths and lengths
+    widths = [bacteria.width for bacteria in bacteria_list]
+    lengths = [bacteria.length for bacteria in bacteria_list]
 
-    # plotting = False # Set to True to plot the image and mask
+    # Plot histograms
+    fig, ax = plt.subplots(1, 2, figsize=(12, 5))
+    ax[0].hist(widths, bins=30, color='blue', alpha=0.7)
+    ax[0].set_title('Width Distribution')
 
-    # if plotting:
-    #     plt.imshow(image)
-    #     plt.imshow(mask)
-    #     plt.show()
-    # else:
-    #     pass
-
-    # bacteria = Bacteria(image, mask, options={'pxsize': 65, 'n_widths': 5, 'fit_type': 'fluorescence', 'psfFWHM': 250})
-
-    for bacteria in bacteria_list:
-        print(f"Centroid: ({bacteria.xc:.2f}, {bacteria.yc:.2f}), width: {bacteria.width:.2f}, length: {bacteria.length:.2f}")
+    ax[1].hist(lengths, bins=30, color='green', alpha=0.7)
+    ax[1].set_title('Length Distribution')
+    plt.show()

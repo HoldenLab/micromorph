@@ -187,14 +187,6 @@ def _process_bacterium(args):
 
 
 def get_bacteria_list(img: np.array, mask_original: np.array, options: dict, pool=None, close_pool=True) -> list:
-    if pool is None:
-        logging.info("Making a pool for multiprocessing - this only happens once!")
-        pool = Pool()
-        logging.info("Pool created!")
-    else:
-        pass
-        # logging.info("Using existing pool for multiprocessing")
-
     mask = label(mask_original)
     
     all_bacteria = []
@@ -208,10 +200,26 @@ def get_bacteria_list(img: np.array, mask_original: np.array, options: dict, poo
         # args = [(img, mask, j, options) for j in range(1, n_cells + 1)]
         args = [(img, mask, j, options) for j in unique_values]
 
-        with tqdm(total=len(args)) as pbar:
-            for result in pool.map(_process_bacterium, args):
-                all_bacteria.append(result)
-                pbar.update(1)
+        # single threaded version for debugging
+        if len(args) < 50:
+            logging.info("Dataset is small. Using single-threaded processing.")
+            with tqdm(total=len(args)) as pbar:
+                for arg in args:
+                    result = _process_bacterium(arg)
+                    all_bacteria.append(result)
+                    pbar.update(1)
+        else:
+            if pool is None:
+                logging.info("Making a pool for multiprocessing - this only happens once!")
+                pool = Pool()
+                logging.info("Pool created!")
+            else:
+                logging.info("Using existing pool for multiprocessing")
+                
+            with tqdm(total=len(args)) as pbar:
+                for result in pool.imap_unordered(_process_bacterium, args):
+                    all_bacteria.append(result)
+                    pbar.update(1)
 
         # Remove None values
         all_bacteria = [x for x in all_bacteria if x is not None]
@@ -225,6 +233,7 @@ def get_bacteria_list(img: np.array, mask_original: np.array, options: dict, poo
             all_bacteria.extend(current_bacteria)
 
     if close_pool:
-        pool.close()
-        pool.join()
+        if pool:
+            pool.close()
+            pool.join()
     return all_bacteria
