@@ -11,6 +11,7 @@ from micromorph.bacteria.phase_contrast_fitting import fit_phase_contrast_profil
 from micromorph.bacteria.fluorescence_fitting import fit_ring_profile
 
 from tqdm import tqdm
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 def process_single_bacterium(args):
     img, mask, i, bact, options = args
@@ -48,12 +49,11 @@ def run_measure360(img: np.array, mask: np.array, options: dict = dict(), pool=N
         List of Bacteria360 objects.
     """
     if pool is None:
-        logging.info("Making a pool for multiprocessing - this only happens once!")
-        pool = multiprocessing.Pool()
+        logging.info("Making a pool for multithreading - this only happens once!")
+        pool = ThreadPoolExecutor()  # Create executor outside a with block
         logging.info("Pool created!")
     else:
-        logging.info("Using existing pool for multiprocessing")
-        pass
+        logging.info("Using existing pool for multithreading")
 
     all_bacteria = []
     if len(img.shape) == 2:
@@ -61,10 +61,11 @@ def run_measure360(img: np.array, mask: np.array, options: dict = dict(), pool=N
         props = regionprops(mask)
 
         args = [(img, mask, i, bact, options) for i, bact in enumerate(props)]
-        # all_bacteria = pool.map(process_single_bacterium, args)
 
+        futures = [pool.submit(process_single_bacterium, arg) for arg in args]
         with tqdm(total=len(args)) as pbar:
-            for result in pool.map(process_single_bacterium, args):
+            for future in as_completed(futures):
+                result = future.result()
                 all_bacteria.append(result)
                 pbar.update(1)
     else:
@@ -82,8 +83,8 @@ def run_measure360(img: np.array, mask: np.array, options: dict = dict(), pool=N
             all_bacteria.extend(current_data)
 
     if close_pool:
-        pool.close()
-        pool.join()
+        if pool:
+            pool.shutdown(wait=True)
 
     return all_bacteria
 

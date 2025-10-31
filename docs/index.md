@@ -4,6 +4,8 @@
 
 `micromorph` can be used as a package, or through the napari plugin `napari-micromorph`. We recommend starting with the napari plugin to get a sense of what value can be calculated and what parameters are optimal for boundary and midline detection for a specific sample.
 
+You can read about the package and what it can do in our pre-print.
+
 !!! warning
     The documentation is still in development, so some parts may be incomplete or missing. We are 
     working on it!
