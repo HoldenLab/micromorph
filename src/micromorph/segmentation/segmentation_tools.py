@@ -64,8 +64,9 @@ dict ={}) -> Union[np.array, np.array]:
     if len(images.shape) == 2:
         try:
             masks, flows, styles = model.eval(images, **params)
-        except ValueError:
-            logging.error("Error in Omnipose segmentation. A blank mask will be returned.")
+        except ValueError as e:
+            logging.error(f"Error in Omnipose segmentation: {e}")
+            logging.info("Error in Omnipose segmentation. A blank mask will be returned.")
             masks = np.zeros_like(images)
             flows = np.zeros_like(images)
     else:
