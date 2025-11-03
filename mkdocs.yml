@@ -5,12 +5,6 @@ repo_name: HoldenLab/micromorph
 repo_url: https://github.com/HoldenLab/micromorph
 
 plugins:
-      # autoplay: true
-      # loop: true
-      # muted: true
-      # controls: true
-      # css_style:
-      #   width: "60%"
   - mkdocstrings:
         handlers:
           python:
@@ -45,12 +39,11 @@ plugins:
               # separate_signature: true # default is false
 
               show_bases: false # default is true
-              show_source: false # default is true
+              show_source: true # default is true
               extra: 
                 show_label: false
                 show_root_heading: true # default is false
   - search
-
 markdown_extensions:
   - tables
   - attr_list
@@ -63,17 +56,12 @@ markdown_extensions:
   - codehilite
   - toc:
       permalink: "#"
-      toc_depth: 3
-
-
-
 nav:
   - Home: index.md
   - napari-micromorph:
       - Installation: napari-micromorph/installation.md 
       - Segmenting your images: napari-micromorph/segmentation.md
       - Analysing your images: napari-micromorph/analysis.md
-      - Post-processing: napari-micromorph/post_processing.md
   - Usage:
       - Napari plugin: usage/napari_plugin_example.md
       - API: usage/api_example.md
@@ -84,47 +72,21 @@ nav:
       - Fitting Methods: API/fitting_methods.md
       - Shape Analysis: API/shape_analysis.md
       - Segmentation: API/segmentation_utilities.md
-  # - API:
-  #     # - Bacteria Class: API/bacteria.md
-  #     # - Fitting Methods: API/fitting_methods.md
-  #     # - Shape Analysis: API/shape_analysis.md
-  #     # - measure
-  #     # - Utilities: API/utilities.md
-
 watch:
   - src/micromorph
-  # - examples
 
 theme:
   name: "material"
   features:
-    # - navigation.tabs
-    # - navigation.top
     - search.highlight
     - search.suggest
-    # - toc
-    # - toc.integrate
-    - content.code.annotate
     - content.tabs.linked
     - content.tabs.link
     - content.code.annotate
-    - content.code.copy
-    # - navigation.tabs
-    # - navigation.footer  # next/previous links in footer
-
-
   icon:
     repo: fontawesome/brands/github
 
   palette:
-#    # Palette toggle for automatic mode
-#    - media: "(prefers-color-scheme)"
-#      primary: blue grey
-#      toggle:
-#        icon: material/brightness-auto
-#        name: Switch to light mode
-
-    # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
       primary: indigo
       scheme: default
