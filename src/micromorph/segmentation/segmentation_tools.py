@@ -6,6 +6,7 @@ from skimage.measure import regionprops
 import time
 from typing import Union
 from cellpose_omni import models
+import logging
 
 def run_omnipose(images: np.array, model_name: str, gpu_option: bool, chans: tuple or None =None, filter_options:
 dict ={}) -> Union[np.array, np.array]:
@@ -61,7 +62,12 @@ dict ={}) -> Union[np.array, np.array]:
 
     tic = time.time()
     if len(images.shape) == 2:
-        masks, flows, styles = model.eval(images, **params)
+        try:
+            masks, flows, styles = model.eval(images, **params)
+        except ValueError:
+            logging.error("Error in Omnipose segmentation. A blank mask will be returned.")
+            masks = np.zeros_like(images)
+            flows = np.zeros_like(images)
     else:
         n_images = len(images)
         n = range(n_images)
@@ -78,7 +84,7 @@ dict ={}) -> Union[np.array, np.array]:
             flows[i] = sublist[-1]  # -1
 
     net_time = time.time() - tic
-    print('Total segmentation time: {}s'.format(net_time))
+    logging.info('Total segmentation time: {}s'.format(net_time))
 
     if filter_options:
         masks = filter_mask(masks, filter_options)
