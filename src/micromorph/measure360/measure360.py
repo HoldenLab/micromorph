@@ -1,6 +1,5 @@
 import numpy as np
 import time
-import multiprocessing
 import logging
 from scipy.signal import savgol_filter
 

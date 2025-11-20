@@ -47,6 +47,7 @@ plugins:
 markdown_extensions:
   - tables
   - attr_list
+  - def_list
   - admonition
   - pymdownx.highlight
   - pymdownx.extra
@@ -63,7 +64,6 @@ nav:
       - Segmenting your images: napari-micromorph/segmentation.md
       - Analysing your images: napari-micromorph/analysis.md
   - Usage:
-      - Napari plugin: usage/napari_plugin_example.md
       - API: usage/api_example.md
       - Batch processing: usage/batch_tools_example.md
   - API:

@@ -1,8 +1,5 @@
 import pickle
-import pandas as pd
-import h5py
 import numpy as np
-
 
 def export_analysis_setting(setting, output_path, method='pickle'):
     """
@@ -41,6 +38,12 @@ def export_full_analysis(bacteria_data: list, output_path, method='all', data_ty
         with open(output_path+'.pickle', 'wb') as handle:
             pickle.dump(bacteria_data, handle, protocol=pickle.HIGHEST_PROTOCOL)
     elif method == 'csv':
+        try:
+            import pandas as pd
+        except ImportError:
+            print("Pandas is not installed. Please install pandas to export CSV files.")
+            return
+
         if data_type == 'Bacteria':
             data_dictionary = get_results_dictionary(bacteria_data)
         elif data_type == 'Bacteria360':
@@ -231,6 +234,8 @@ def get_360_results_dictionary(bacteria_data: list) -> dict:
 
 def export_bacteria_to_hdf5(hdf5_path, data_dictionary):
     try:
+        import h5py
+
         with h5py.File(hdf5_path, 'w') as f:
             for key in data_dictionary.keys():
                 f.create_group(key)
@@ -239,6 +244,7 @@ def export_bacteria_to_hdf5(hdf5_path, data_dictionary):
                     if data is None:
                         data = np.nan
                     f[key].create_dataset(str(i), data=data)
-    except:
-        print("Something went wrong...")
-        raise ValueError('Error saving data to hdf5 file')
+    except ImportError:
+        print("Something went wrong. Please make sure h5py is installed correctly.")
+        return
+        # raise ValueError('Error saving data to hdf5 file')
