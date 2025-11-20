@@ -12,6 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: 3.x  # choose your Python version
-      - run: pip install mkdocs mkdocs-material mkdocs-video mkdocstrings mkdocstrings-python pygments pymdown-extensions 
+          python-version: 3.12  # choose your Python version
+      - run: pip install -e .[docs]
+      # - run: pip install mkdocs mkdocs-material mkdocs-video mkdocstrings mkdocstrings-python pygments pymdown-extensions 
       - run: mkdocs gh-deploy --force
