@@ -18,7 +18,7 @@ If you would like to install the more complete gui available with the napari plu
 
 # Documentation
 
-Documentation is available [here](https://github.com/HoldenLab/micromorph).
+Documentation is available [here](https://holdenlab.github.io/micromorph).
 
 # Example Usage
 
