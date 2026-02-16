@@ -29,6 +29,8 @@ You will need to have set up a python environment and installed napari before yo
 
 You can also download the plugin through the napari-hub directly inside your napari install.
 
+⚠️ Installation in Windows requires the Visual Studio C++ build tools. You can download them [here](https://visualstudio.microsoft.com/downloads/?q=build+tools).
+
 ## Examples
 
 Read the pages in the Usage section, or check out the scripts and notebooks available in the [GitHub repository](https://github.com/HoldenLab/micromorph/tree/master/examples).
