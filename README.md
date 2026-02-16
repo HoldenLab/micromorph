@@ -16,6 +16,8 @@ If you want to  install the dependencies required to open the `micromorph-batcht
 
 If you would like to install the more complete gui available with the napari plugin, please refer to the instructions at [napari-micromorph](https://github.com/HoldenLab/napari-micromorph).
 
+⚠️ Installation in Windows requires the Visual Studio C++ build tools. You can download them [here](https://visualstudio.microsoft.com/downloads/?q=build+tools).
+
 # Documentation
 
 Documentation is available [here](https://holdenlab.github.io/micromorph).
