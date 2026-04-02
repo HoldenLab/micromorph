@@ -47,7 +47,8 @@ def get_bacteria_length(medial_axis_extended: np.array, pxsize: float or int = 1
 
 def get_bacteria_widths(img: np.array, med_ax: np.array, n_lines: int = 5, pxsize: float or int = 1.0,
                         psfFWHM: float or int = 0.250, fit_type: str or None = None,
-                        line_magnitude: float or int = 20) -> np.array:
+                        line_magnitude: float or int = 20,
+                        initial_width_guess: float or None = None) -> np.array:
     """
     Calculate the width of a segmented bacterium.
 
@@ -81,13 +82,13 @@ def get_bacteria_widths(img: np.array, med_ax: np.array, n_lines: int = 5, pxsiz
 
     for points in profile_points:
         # img or bound_transform
-        current_profile = profile_line(img, (points[1], points[0]), (points[3], points[2]))
+        current_profile = profile_line(img, (points[1], points[0]), (points[3], points[2]), mode='constant', cval=np.min(img))
 
         x = np.arange(0, len(current_profile)) * pxsize
 
         try:
             if fit_type == 'fluorescence':
-                result = fit_ring_profile(x, current_profile, psfFWHM)
+                result = fit_ring_profile(x, current_profile, psfFWHM, initial_width_guess=initial_width_guess)
                 width = result.params['R'] * 2
             elif fit_type == 'phase':
                 result = fit_phase_contrast_profile(x, current_profile)

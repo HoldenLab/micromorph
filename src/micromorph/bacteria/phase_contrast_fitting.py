@@ -35,7 +35,7 @@ def super_gaussian(x: np.array, center: float, width: float, amplitude: float, o
 
 def fit_top_hat_profile(x: np.array, y: np.array):
     """
-    Fit the phase contrast profile using a super gaussian (top-hat) model.
+    Fit the cytoplasmic profile using a super gaussian (top-hat) model.
 
     Parameters
     ----------
@@ -50,9 +50,6 @@ def fit_top_hat_profile(x: np.array, y: np.array):
     result : lmfit object
         the result of the fitting process, see lmfit documentation for more details
     """
-    # Invert the profile
-    # y = invert_profile(y)
-
     # Get initial guess for the parameters
     initial_guess = get_initial_guess(x, y)
 

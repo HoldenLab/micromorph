@@ -1,10 +1,9 @@
 import numpy as np
 from scipy.ndimage import binary_hit_or_miss
-from skimage.morphology import label
+from skimage.morphology import label, dilation, disk
 from skimage.segmentation import find_boundaries
 from skimage.measure import find_contours
 from scipy.interpolate import splrep, splev
-
 """
 Collection of utility functions used by the shape analysis functions, mainly to do with  binary image processing.
 """
@@ -495,7 +494,11 @@ def get_width_profile_lines(medial_axis: np.array, n_points: int = 3, line_magni
     return x_high, y_high, x_low, y_low
 
 
-def apply_mask_to_image(img: np.array, mask: np.array, method: str = 'min') -> np.array:
+def apply_mask_to_image(img: np.array,
+                        mask: np.array, 
+                        method: str = 'min', 
+                        bbox=None,
+                        dilation_factor = 5) -> np.array:
     """
     A function to apply a dilation to a mask, and then apply the mask to the image.
     This makes all the points outside the region of interest black.
@@ -512,6 +515,17 @@ def apply_mask_to_image(img: np.array, mask: np.array, method: str = 'min') -> n
     img_masked : np.array
         The masked image
     """
+
+    # add offset
+    OFFSET = 10
+
+    if bbox:
+        mask_cropped = mask[bbox[0]-OFFSET:bbox[2]+OFFSET, bbox[1]-OFFSET:bbox[3]+OFFSET]
+        mask_dilated = dilation(mask_cropped, footprint=disk(5))
+        # mask_dilated = mask_cropped
+        mask[bbox[0]-OFFSET:bbox[2]+OFFSET, bbox[1]-OFFSET:bbox[3]+OFFSET] = mask_dilated
+    else:
+        pass
 
     mask_inverted = np.invert(np.copy(mask))
 

@@ -52,10 +52,11 @@ class Bacteria:
         max_iter = options.get('max_iter', 50)
         min_distance_to_boundary = options.get('min_distance_to_boundary', 1)
         step_size = options.get('step_size', 1)
-
-        # TODO: add to GUI!
         spline_spacing = options.get('spline_spacing', 0.25)
         spline_val = options.get('spline_val', 3)
+
+        # TODO: add to GUI!
+        apply_mask = options.get('apply_mask', False)
 
 
         # Get properties from regionprops, then add them to the class.
@@ -67,34 +68,41 @@ class Bacteria:
         self.xc_nm = self.xc * pxsize
         self.yc_nm = self.yc * pxsize
         self.bbox = bacteria_props[0].bbox
-        self.axis_major_length = bacteria_props[0].major_axis_length * pxsize
-        self.axis_minor_length = bacteria_props[0].minor_axis_length * pxsize
+        self.axis_major_length = bacteria_props[0].axis_major_length * pxsize
+        self.axis_minor_length = bacteria_props[0].axis_minor_length * pxsize
         self.orientation = bacteria_props[0].orientation
         self.area = bacteria_props[0].area * pxsize**2
 
         # Apply filter to image to avoid possible issues when calculating width of bacteria in clumps.
         # also, crop image to reduce computational time of erosion etc
         bbox = self.bbox
-        mask_cropped = np.copy(mask[bbox[0]-1:bbox[2]+1, bbox[1]-1:bbox[3]+1])
-        image_cropped = np.copy(img[bbox[0]-1:bbox[2]+1, bbox[1]-1:bbox[3]+1])
+        # TODO: cehck if this was worth it.
+        # mask_cropped = np.copy(mask[bbox[0]-1:bbox[2]+1, bbox[1]-1:bbox[3]+1])
+        # image_cropped = np.copy(img[bbox[0]-1:bbox[2]+1, bbox[1]-1:bbox[3]+1])
 
-        if fit_type == 'phase':
-            # Apply mask to image
-            img_filtered = apply_mask_to_image(image_cropped, mask_cropped, method='max')
+        mask_cropped = np.copy(mask)
+        image_cropped = img
+
+        if apply_mask:
+            if fit_type == 'phase':
+                # Apply mask to image
+                img_filtered = apply_mask_to_image(image_cropped, mask_cropped, method='max', bbox=bbox)
+            else:
+                # Apply mask to image
+                img_filtered = apply_mask_to_image(image_cropped, mask_cropped, method='min', bbox=bbox)
         else:
-            # Apply mask to image
-            img_filtered = apply_mask_to_image(image_cropped, mask_cropped, method='min')
+            img_filtered = image_cropped
 
         # img_filtered = apply_mask_to_image(image_cropped, mask_cropped)
 
         # Calculate other properties with custom functions.
         try:
-            self.boundary = get_bacteria_boundary(mask_cropped, boundary_smoothing_factor=boundary_smoothing_factor)
+            self.boundary = get_bacteria_boundary(mask, boundary_smoothing_factor=boundary_smoothing_factor) # try this with just mask
             self.perimeter = np.sum(np.sqrt(np.sum(np.diff(self.boundary, axis=0)**2, axis=1))) * pxsize
             self.circularity = (4 * np.pi * self.area) / (self.perimeter**2)
 
             start_time_medial_ax = time.perf_counter()
-            self.medial_axis = smooth_medial_axis(get_medial_axis(mask_cropped), self.boundary,
+            self.medial_axis = smooth_medial_axis(get_medial_axis(mask), self.boundary,
                                                   error_threshold=error_threshold, max_iter=max_iter,
                                                   spline_val=spline_val, spline_spacing=spline_spacing)
             end_time_medial_ax = time.perf_counter()
@@ -114,8 +122,9 @@ class Bacteria:
             self.all_widths = get_bacteria_widths(img_filtered,
                                                   self.medial_axis,
                                                   n_lines=n_widths, pxsize=pxsize, fit_type=fit_type,
-                                                  line_magnitude=bacteria_props[0].axis_minor_length*1.5,
-                                                  psfFWHM=psfFWHM)
+                                                  line_magnitude=bacteria_props[0].axis_minor_length*2,
+                                                  psfFWHM=psfFWHM,
+                                                  initial_width_guess=self.axis_minor_length)
             end_time_widths = time.perf_counter()
             logging.debug(f"Time taken to calculate widths: {end_time_widths - start_time_widths:.2f} seconds")
 

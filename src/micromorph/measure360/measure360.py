@@ -150,12 +150,12 @@ class Bacteria360:
         width_data = np.array(measure360(img, centroid, options=options))
 
         # remove any rows containing nan values
-        width_data = width_data[~np.isnan(width_data).any(axis=1)]
+        # width_data = width_data[~np.isnan(width_data).any(axis=1)]
 
         self.centroid = centroid
         self.width_data = width_data
-        self.width = np.min(self.width_data[:, 1])
-        self.length = np.max(self.width_data[:, 1])
+        self.width = np.nanmin(self.width_data[:, 1])
+        self.length = np.nanmax(self.width_data[:, 1])
         self.area = area
         self.label = label
         self.bbox = bbox
@@ -206,7 +206,7 @@ def fit_multiprocessing(img, angle, x_1, y_1, x_2, y_2, params):
     fit_type = params[2]
 
     # Set up array to collect data
-    current_profile = profile_line(img, (y_1, x_1), (y_2, x_2))
+    current_profile = profile_line(img, (y_1, x_1), (y_2, x_2), mode='constant')
 
     x = np.arange(0, len(current_profile)) * pxsize
 
@@ -352,7 +352,6 @@ def width_distribution(all_data):
 
     plt.hist(all_widths)
     plt.show()
-    print(len(all_widths))
 
 
 def filter_measure360(bacteria, filter_type, filter_settings):
@@ -390,7 +389,7 @@ def filter_measure360(bacteria, filter_type, filter_settings):
     elif filter_type == 'sav-gol':
         window = filter_settings[0]
         order = filter_settings[1]
-        width_data = savgol_filter(width_data, window, order)
+        width_data = savgol_filter(width_data, window, order, mode='wrap')
         bacteria.width_data[:, 1] = width_data
 
     try:

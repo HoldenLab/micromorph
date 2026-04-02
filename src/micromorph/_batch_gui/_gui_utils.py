@@ -1,4 +1,4 @@
-from qtpy.QtGui import QIntValidator
+from qtpy.QtGui import QIntValidator, QDoubleValidator
 from qtpy.QtWidgets import QWidget, QLabel, QLineEdit, QFormLayout, QHBoxLayout, QComboBox
 
 class LabelledIntField(QWidget):
@@ -46,7 +46,7 @@ class LabelledFloatField(QWidget):
         self.lineEdit = QLineEdit(self)
         self.lineEdit.setContentsMargins(0, 0, 0, 0)
         # self.lineEdit.setFixedWidth(40)
-        self.lineEdit.setValidator(QIntValidator())
+        self.lineEdit.setValidator(QDoubleValidator())
         if initial_value != None:
             self.lineEdit.setText(str(initial_value))
 

@@ -1,6 +1,6 @@
 from lmfit import Model
 import numpy as np
-from scipy.signal import convolve
+from scipy.signal import convolve, detrend
 
 def gaussian(params: tuple or list, x: np.array) -> np.array:
     """
@@ -99,7 +99,7 @@ def ring_profile(x: np.array,
 
 
 
-def get_initial_guess(x: np.array, y: np.array):
+def get_initial_guess(x: np.array, y: np.array, initial_width_guess):
     """
     Get initial guess for ring profile model.
 
@@ -128,7 +128,10 @@ def get_initial_guess(x: np.array, y: np.array):
     max_loc = x[(np.argmax(y[len(y) // 2:]) + len(y) // 2)]
 
     # print(max_loc - min_loc)
-    width_guess = (max_loc - min_loc) / 2  # this could possibly be determined from the FWHM of the peak
+    if initial_width_guess:
+        width_guess = initial_width_guess / 2
+    else:
+        width_guess = (max_loc - min_loc) / 2  # this could possibly be determined from the FWHM of the peak
 
     initial_guess = {'x0': x0_guess, 'R': width_guess, 'offset': bg_guess, 'amp': amplitude_guess}
 
@@ -148,13 +151,15 @@ def prepare_data(profile: np.array)-> np.array:
     profile: np.array
         the normalised profile
     """
+    # Detrend
+    # profile = detrend(profile)
     # Normalise the profile
     profile = profile / np.max(profile)
 
 
     return profile
 
-def fit_ring_profile(x: np.array, y: np.array, psfFWHM: float):
+def fit_ring_profile(x: np.array, y: np.array, psfFWHM: float, initial_width_guess: float or None = None):
     """
     Fit the ring profile using a tilted circle model.
 
@@ -181,7 +186,7 @@ def fit_ring_profile(x: np.array, y: np.array, psfFWHM: float):
     y_upscaled = np.interp(x_upscaled, x, y)
 
     # Get initial guess for the parameters
-    initial_guess = get_initial_guess(x_upscaled, y_upscaled)
+    initial_guess = get_initial_guess(x_upscaled, y_upscaled, initial_width_guess)
 
     # Create the model
     gmodel = Model(ring_profile)
