@@ -6,7 +6,11 @@ Link to preprint?
 
 # Installation
 
-If you only want to use the python package, you can install it by running
+If you are using conda, you can generate an environment suitable for micromorph use by running
+
+`conda create -n micromorph python==3.12`
+
+After that, if you only want to use the python package, you can install it by running
 
 `pip install micromorph`
 
@@ -17,6 +21,8 @@ If you want to  install the dependencies required to open the `micromorph-batcht
 If you would like to install the more complete gui available with the napari plugin, please refer to the instructions at [napari-micromorph](https://github.com/HoldenLab/napari-micromorph).
 
 ⚠️ Installation in Windows requires the Visual Studio C++ build tools. You can download them [here](https://visualstudio.microsoft.com/downloads/?q=build+tools).
+
+⚠️ If you want to run omnipose on your GPU, you will need a CUDA compatible GPU and to install pytorch following the [dedicated instructions for your CUDA drivers](https://pytorch.org/get-started/locally/).
 
 # Documentation
 
